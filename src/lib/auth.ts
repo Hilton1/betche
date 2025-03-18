@@ -9,7 +9,8 @@ import { loginSchema } from '@/schemas/loginSchema';
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   pages: {
-    error: '/login'
+    error: '/login',
+    signIn: '/login'
   },
   adapter: PrismaAdapter(db),
   session: {
