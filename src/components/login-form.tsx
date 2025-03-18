@@ -1,4 +1,6 @@
-'use client';
+"use client";
+
+import { signIn } from 'next-auth/react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +22,6 @@ interface ILoginFormProps {
   loginAction: (formData: FormData) => Promise<void | { error: string }>;
 }
 
-
 export function LoginForm({ loginAction }: ILoginFormProps) {
   const [, dispatchAction, isPending] = useActionState(
     async (_previousData: any, formData: FormData) => {
@@ -30,7 +31,7 @@ export function LoginForm({ loginAction }: ILoginFormProps) {
         toast.error(response.error);
       }
     },
-    null,
+    null
   );
 
   return (
@@ -69,10 +70,20 @@ export function LoginForm({ loginAction }: ILoginFormProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={isPending}>
-                  {isPending ? <Loader2Icon className="animate-spin" /> : "Login"}
+                  {isPending ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
 
-                <Button variant="outline" className="w-full" type="button" disabled={isPending}>
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => signIn('google')}
+                >
                   Login with Google
                 </Button>
               </div>

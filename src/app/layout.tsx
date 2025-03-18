@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  title: "Authjs",
-  description: "Authentication with Auth.js",
+  title: "Betche",
+  description: "Site de apostas internas.",
 };
 
 export default async function RootLayout({
