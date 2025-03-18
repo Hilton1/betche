@@ -1,27 +1,26 @@
 import { NextResponse } from "next/server";
-import { auth } from "./lib/auth";
 
-export default auth((request) => {
-  const isLogged = !!request.auth;
-  const { pathname } = request.nextUrl;
+export default function middleware(request: Request) {
+  const token = request.headers.get("cookie")?.includes("authjs.session-token");
+  const { pathname } = new URL(request.url);
 
-  const isPrivatePage = pathname.startsWith('/dash');
+  const isPrivatePage = pathname.startsWith("/dash");
 
-  if (isLogged && !isPrivatePage) {
-    return NextResponse.redirect(new URL('/dash', request.nextUrl));
+  if (token && !isPrivatePage) {
+    return NextResponse.redirect(new URL("/dash", request.url));
   }
 
-  if (!isLogged && isPrivatePage) {
-    return NextResponse.redirect(new URL('/login', request.nextUrl));
+  if (!token && isPrivatePage) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-});
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    '/login',
-    '/register',
-    '/dash',
-    '/dash/:path',
-  ]
-}
+    "/login",
+    "/register",
+    "/dash/:path*",
+  ],
+};
