@@ -6,7 +6,7 @@ export default async function Home() {
   return (
     <div>
       <pre>
-        {JSON.stringify(session, null, 2)}
+        {JSON.stringify(session?.user, null, 2)}
       </pre>
     </div>
   )
