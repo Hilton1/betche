@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,19 +13,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
-import { Loader2Icon } from "lucide-react";
+import { ChevronLeftIcon, Loader2Icon, Wand2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { loginAction, magicLinkAction } from "@/app/login/actions";
 
-interface ILoginFormProps {
-  loginAction: (formData: FormData) => Promise<void | { error: string }>;
-}
+export function LoginForm() {
+  const [isMagicLink, setIsMagicLink] = useState(false);
 
-export function LoginForm({ loginAction }: ILoginFormProps) {
   const [, dispatchAction, isPending] = useActionState(
     async (_previousData: any, formData: FormData) => {
-      const response = await loginAction(formData);
+      const action = isMagicLink ? magicLinkAction : loginAction;
+
+      const response = await action(formData);
 
       if (response?.error) {
         toast.error(response.error);
@@ -56,35 +57,54 @@ export function LoginForm({ loginAction }: ILoginFormProps) {
                   required
                 />
               </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+              {!isMagicLink && (
+                <div className="grid gap-3">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+
+                  </div>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                  />
                   <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+                      href="#"
+                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
                 </div>
-                <Input id="password" name="password" type="password" required />
-              </div>
+              )}
+
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={isPending}>
-                  {isPending ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    "Login"
-                  )}
+                  {isPending && <Loader2Icon className="animate-spin" />}
+                  {isMagicLink ? "Send Magic Link" : "Login"}
                 </Button>
+
+                {!isMagicLink && (
+                  <Button
+                    variant="outline"
+                    className="w-full cursor-pointer"
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => signIn("google")}
+                  >
+                    Login with Google
+                  </Button>
+                )}
 
                 <Button
                   variant="outline"
                   className="w-full cursor-pointer"
                   type="button"
                   disabled={isPending}
-                  onClick={() => signIn('google')}
+                  onClick={() => setIsMagicLink((prev) => !prev)}
                 >
-                  Login with Google
+                  {isMagicLink ? <ChevronLeftIcon /> : <Wand2Icon />}
+                  {isMagicLink ? "Back" : "Login with Magic Link"}
                 </Button>
               </div>
             </div>
