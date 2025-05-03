@@ -5,6 +5,7 @@ export default async function Home() {
 
   return (
     <div>
+      Seu Cargo é: {session?.user.role}
       <pre>
         {JSON.stringify(session?.user, null, 2)}
       </pre>
