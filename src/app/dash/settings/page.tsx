@@ -1,12 +1,9 @@
 import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation";
+import { withRoleGuard } from "@/lib/withRoleGuard";
+import { UserRole } from "@prisma/client";
 
-export default async function Settings() {
+async function Settings() {
   const session = await auth();
-
-  if(session?.user.role !== "ADMIN") {
-    redirect("/dash");
-  }
 
   return (
     <div>
@@ -14,3 +11,5 @@ export default async function Settings() {
     </div>
   )
 }
+
+export default withRoleGuard(Settings, [UserRole.ADMIN]);

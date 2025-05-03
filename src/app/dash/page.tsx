@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
+import { withRoleGuard } from "@/lib/withRoleGuard";
+import { UserRole } from "@prisma/client";
 
-export default async function Home() {
+async function Home() {
   const session = await auth();
 
   return (
@@ -12,3 +14,5 @@ export default async function Home() {
     </div>
   )
 }
+
+export default withRoleGuard(Home, [UserRole.ADMIN, UserRole.USER]);
